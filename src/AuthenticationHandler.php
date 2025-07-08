@@ -9,13 +9,16 @@ use CrmCareCloud\Webservice\RestApi\Client\Model\ActionsLoginBody1;
 use CrmCareCloud\Webservice\RestApi\Client\SDK\Data\AuthTypes;
 use Exception;
 use GuzzleHttp\Client;
+use GuzzleHttp\Promise\PromiseInterface;
+use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 
 class AuthenticationHandler
 {
-    /** @var string  */
-    private string $token = "";
-/** @var CareCloud  */
+    /** @var string|null */
+    private ?string $token = null;
+
+    /** @var CareCloud */
     private CareCloud $care_cloud;
 
     /**
@@ -27,10 +30,12 @@ class AuthenticationHandler
     }
 
     /**
+     * @param callable(MessageInterface, array): PromiseInterface $handler
+     *
+     * @return callable(RequestInterface, array): PromiseInterface
      * @throws ApiException
-     * @throws Exception
      */
-    public function __invoke(callable $handler): Closure
+    public function __invoke(callable $handler): \Closure
     {
         $config = $this->care_cloud->getConfig();
         if ($config->getToken()) {
@@ -60,9 +65,9 @@ class AuthenticationHandler
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getToken(): string
+    public function getToken(): ?string
     {
         return $this->token;
     }

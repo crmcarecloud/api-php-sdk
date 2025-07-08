@@ -32,7 +32,7 @@ $sort_direction = 'DESC'; // string | Direction of sorting the response list (op
 
 // Call endpoint and get data
 try {
-    $get_agreements = $care_cloud->agreementsApi()->getAgreements($accept_language, $count, $offset, $sort_field, $sort_direction);
+    $get_agreements = $care_cloud->agreementsApi()->getConsents($accept_language, $count, $offset, $sort_field, $sort_direction);
     $agreements = $get_agreements->getData()->getAgreements();
     $total_items = $get_agreements->getData()->getTotalItems();
     var_dump($agreements);

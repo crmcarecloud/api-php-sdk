@@ -24,7 +24,7 @@ $careCloud = new CareCloud($config, $cache);
 
 try {
     // Get all agreements
-    $agreements = $careCloud->agreementsApi()->getAgreements();
+    $agreements = $careCloud->agreementsApi()->getConsents();
     $items = $agreements->getData()->getAgreements();
 } catch (ApiException $e) {
     var_dump($e->getResponseBody());

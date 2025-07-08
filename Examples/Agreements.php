@@ -15,7 +15,7 @@ $careCloud = new CareCloud($config);
  * Get a list of agreements accepted in CRM CareCloud
  */
 try {
-    $agreements = $careCloud->agreementsApi()->getAgreements();
+    $agreements = $careCloud->agreementsApi()->getConsents();
     $items = $agreements->getData()->getAgreements();
     $totalItems = $agreements->getData()->getTotalItems();
 } catch (ApiException $e) {
@@ -33,7 +33,7 @@ $accept_language = 'cs'; //	string | The unique id of the language code by ISO 6
 $agreement_id = "81eaeea13b8984a169c490a325"; // string | The unique id of an agreement in CareCloud
 
 try {
-    $agreement = $careCloud->agreementsApi()->getAgreement($agreement_id, $accept_language);
+    $agreement = $careCloud->agreementsApi()->getConsent($agreement_id, $accept_language);
     $name = $agreement->getData()->getName();
     $text = $agreement->getData()->getText();
 } catch (ApiException $e) {

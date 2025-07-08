@@ -29,7 +29,7 @@ $agreement_id = '8fd73167342d06899c4c015320';
 
 // Call endpoint and get data
 try {
-    $get_agreement = $care_cloud->agreementsApi()->getAgreement($agreement_id, $accept_language);
+    $get_agreement = $care_cloud->agreementsApi()->getConsent($agreement_id, $accept_language);
     $agreement = $get_agreement->getData();
     var_dump($agreement);
 } catch (ApiException $e) {

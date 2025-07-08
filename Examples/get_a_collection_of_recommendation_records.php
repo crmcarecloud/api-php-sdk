@@ -35,7 +35,7 @@ $name = null; // string | Search record by name or a part of the name (optional,
 
 // Call endpoint and get data
 try {
-    $get_recommendation_records = $care_cloud->customersApi()->getSubCustomerRecommendation(
+    $get_recommendation_records = $care_cloud->customersApi()->getSubCustomerHintRecords(
         $customer_id,
         $accept_language,
         $count,

@@ -12,7 +12,7 @@ $careCloud = new CareCloud($config);
 
 try {
     // Get all skipasses
-    $skipasses = $careCloud->skipassesApi()->getSkipassesOverview();
+    $skipasses = $careCloud->skipassesApi()->getEntrancesOverview();
     $data = $skipasses->getData();
 } catch (ApiException $e) {
     var_dump($e->getResponseBody());

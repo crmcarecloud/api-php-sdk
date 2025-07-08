@@ -125,7 +125,6 @@ class CustomersApi extends \CrmCareCloud\Webservice\RestApi\Client\Api\Customers
      * @param string|null $accept_language
      * @return array<string, string|null>
      * @throws ApiException
-     * @throws Exception
      */
     public function postCustomerExtended(
         CustomersBody $customer_body,

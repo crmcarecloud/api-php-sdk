@@ -36,6 +36,12 @@ class Config
     private string $interface;
 
     /**
+     * @param string $project_uri
+     * @param string $login
+     * @param string $password
+     * @param string $external_app_id
+     * @param string $auth_type
+     * @param string $interface
      * @param CacheInterface|null $cache
      * @param string|null $token
      * @param callable[] $middlewares

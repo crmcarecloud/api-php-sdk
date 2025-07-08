@@ -2,7 +2,6 @@
 
 namespace CrmCareCloud\Webservice\RestApi\Client\SDK;
 
-use CrmCareCloud\Webservice\RestApi\Client\Api\AgreementsApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\BookingsApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\BookingStatusesApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\BookingTicketPropertiesApi;
@@ -12,6 +11,7 @@ use CrmCareCloud\Webservice\RestApi\Client\Api\CampaignsApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\CardsApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\CardTypesApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\CommunicationChannelsApi;
+use CrmCareCloud\Webservice\RestApi\Client\Api\ConsentsApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\CountriesApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\CreditHistoryApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\CreditsApi;
@@ -40,6 +40,7 @@ use CrmCareCloud\Webservice\RestApi\Client\Api\OneTimePasswordApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\OrdersApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\PartnerPropertiesApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\PartnersApi;
+use CrmCareCloud\Webservice\RestApi\Client\Api\PaymentTypesApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\PointHistoryApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\PointReservationApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\PointsApi;
@@ -49,9 +50,11 @@ use CrmCareCloud\Webservice\RestApi\Client\Api\ProductGroupsApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\ProductPropertiesApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\ProductRecommendationEngineApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\ProductReservationExternalListTypesApi;
+use CrmCareCloud\Webservice\RestApi\Client\Api\ProductReservationPricesApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\ProductReservationsApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\ProductReservationSourcesApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\ProductsApi;
+use CrmCareCloud\Webservice\RestApi\Client\Api\PurchaseItemPropertiesApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\PurchaseItemTypesApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\PurchasePropertiesApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\PurchasesApi;
@@ -61,11 +64,13 @@ use CrmCareCloud\Webservice\RestApi\Client\Api\RewardPropertiesApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\RewardsApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\RewardTypesApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\SegmentsApi;
-use CrmCareCloud\Webservice\RestApi\Client\Api\SkipassesApi;
+use CrmCareCloud\Webservice\RestApi\Client\Api\ChargedEntrancesApi;
+use CrmCareCloud\Webservice\RestApi\Client\Api\StamperApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\StatusesApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\StoreGroupsApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\StorePropertiesApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\StoresApi;
+use CrmCareCloud\Webservice\RestApi\Client\Api\TargetGroupsApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\TaskPropertiesApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\TasksApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\TestsApi;
@@ -78,7 +83,9 @@ use CrmCareCloud\Webservice\RestApi\Client\Api\WalletApi;
 use CrmCareCloud\Webservice\RestApi\Client\ApiException;
 use CrmCareCloud\Webservice\RestApi\Client\Configuration;
 use CrmCareCloud\Webservice\RestApi\Client\Model\ActionsLoginBody1;
+use CrmCareCloud\Webservice\RestApi\Client\Model\GetCountries200Response;
 use CrmCareCloud\Webservice\RestApi\Client\Model\ModelInterface;
+use CrmCareCloud\Webservice\RestApi\Client\Model\PostUserLogin200Response;
 use CrmCareCloud\Webservice\RestApi\Client\SDK\Cache\Cache;
 use CrmCareCloud\Webservice\RestApi\Client\SDK\Cache\CacheRequestMatcher;
 use CrmCareCloud\Webservice\RestApi\Client\SDK\Data\AuthTypes;
@@ -102,7 +109,7 @@ class CareCloud
     private Config $config;
 
     /** @var AuthenticationHandler */
-    private $auth_handler;
+    private AuthenticationHandler $auth_handler;
 
     /** @var Cache|null */
     private ?Cache $cache;
@@ -118,6 +125,7 @@ class CareCloud
     {
         $this->config = $config;
         $this->cache = $cache;
+        $this->auth_handler = new AuthenticationHandler($this);
     }
 
     /**
@@ -151,9 +159,6 @@ class CareCloud
      */
     public function getClient(): Client
     {
-        if (!$this->auth_handler instanceof AuthenticationHandler) {
-            $this->auth_handler = new AuthenticationHandler($this);
-        }
         $stack = HandlerStack::create(new CurlHandler());
 
         $stack->push($this->auth_handler);
@@ -205,12 +210,12 @@ class CareCloud
     }
 
     /**
-     * @return AgreementsApi
+     * @return ConsentsApi
      * @throws Exception
      */
-    public function agreementsApi(): AgreementsApi
+    public function consentsApi(): ConsentsApi
     {
-        return new AgreementsApi($this->getClient(), $this->getDefaultConfiguration());
+        return new ConsentsApi($this->getClient(), $this->getDefaultConfiguration());
     }
 
     /**
@@ -682,23 +687,12 @@ class CareCloud
     }
 
     /**
-     * @deprecated use hintApi() method
-     *
-     * @return HintsApi
-     * @throws Exception
-     */
-    public function recommendationsApi(): HintsApi
-    {
-        return $this->hintApi();
-    }
-
-    /**
      * @return HintsApi
      * @throws Exception
      */
     public function hintApi(): HintsApi
     {
-        return new HintsApi($this->getClient(), $this->getDefaultConfiguration());
+        return $this->hintApi();
     }
 
     /**
@@ -758,12 +752,12 @@ class CareCloud
     }
 
     /**
-     * @return SkipassesApi
+     * @return ChargedEntrancesApi
      * @throws Exception
      */
-    public function skipassesApi(): SkipassesApi
+    public function chargedEntrancesApi(): ChargedEntrancesApi
     {
-        return new SkipassesApi($this->getClient(), $this->getDefaultConfiguration());
+        return new ChargedEntrancesApi($this->getClient(), $this->getDefaultConfiguration());
     }
 
     /**
@@ -884,12 +878,84 @@ class CareCloud
     }
 
     /**
-     * @return mixed
+     * @return BookingTicketPropertiesApi
+     * @throws Exception
+     */
+    public function bookingTicketPropertiesApi(): BookingTicketPropertiesApi
+    {
+        return new BookingTicketPropertiesApi($this->getClient(), $this->getDefaultConfiguration());
+    }
+
+    /**
+     * @return HintsApi
+     * @throws Exception
+     */
+    public function hintsApi(): HintsApi
+    {
+        return new HintsApi($this->getClient(), $this->getDefaultConfiguration());
+    }
+
+    /**
+     * @return TargetGroupsApi
+     * @throws Exception
+     */
+    public function targetGroupsApi(): TargetGroupsApi
+    {
+        return new TargetGroupsApi($this->getClient(), $this->getDefaultConfiguration());
+    }
+
+    /**
+     * @return ProductReservationPricesApi
+     * @throws Exception
+     */
+    public function productReservationPricesApi(): ProductReservationPricesApi
+    {
+        return new ProductReservationPricesApi($this->getClient(), $this->getDefaultConfiguration());
+    }
+
+    /**
+     * @return PurchaseItemPropertiesApi
+     * @throws Exception
+     */
+    public function purchaseItemPropertiesApi(): PurchaseItemPropertiesApi
+    {
+        return new PurchaseItemPropertiesApi($this->getClient(), $this->getDefaultConfiguration());
+    }
+
+    /**
+     * @return StamperApi
+     * @throws Exception
+     */
+    public function stamperApi(): StamperApi
+    {
+        return new StamperApi($this->getClient(), $this->getDefaultConfiguration());
+    }
+
+    /**
+     * @return PaymentTypesApi
+     * @throws Exception
+     */
+    public function paymentTypesApi(): PaymentTypesApi
+    {
+        return new PaymentTypesApi($this->getClient(), $this->getDefaultConfiguration());
+    }
+
+    /**
+     * @return PointReservationApi
+     * @throws Exception
+     */
+    public function pointReservationApi(): PointReservationApi
+    {
+        return new PointReservationApi($this->getClient(), $this->getDefaultConfiguration());
+    }
+
+    /**
+     * @return GetCountries200Response
      * @throws ApiException
      * @throws InvalidArgumentException
      * @throws Exception
      */
-    public function getCountries(): mixed
+    public function getCountries(): GetCountries200Response
     {
         $cache = $this->cache;
         if ($cache instanceof Cache) {
@@ -900,18 +966,21 @@ class CareCloud
                     3600
                 );
             }
+            /** @var GetCountries200Response $cache_result */
+            $cache_result = $cache->get('countries');
 
-            return $cache->get('countries');
+            return $cache_result;
         }
 
         return $this->countriesApi()->getCountries();
     }
 
     /**
+     * @return PostUserLogin200Response
      * @throws ApiException
      * @throws Exception
      */
-    public function authenticate(): ModelInterface
+    public function authenticate(): PostUserLogin200Response
     {
         $body = new ActionsLoginBody1();
         $body
@@ -925,7 +994,8 @@ class CareCloud
     }
 
     /**
-     * @throws Exception
+     * @return string
+     * @throws \Exception
      */
     public function getHashedPassword(): string
     {
