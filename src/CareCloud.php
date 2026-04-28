@@ -2,6 +2,7 @@
 
 namespace CrmCareCloud\Webservice\RestApi\Client\SDK;
 
+use CrmCareCloud\Webservice\RestApi\Client\Api\AudiencesApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\BookingsApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\BookingStatusesApi;
 use CrmCareCloud\Webservice\RestApi\Client\Api\BookingTicketPropertiesApi;
@@ -207,6 +208,15 @@ class CareCloud
     {
         $this->config = $config;
         $this->default_configuration = null;
+    }
+
+    /**
+     * @return AudiencesApi
+     * @throws Exception
+     */
+    public function audiencesApi(): AudiencesApi
+    {
+        return new AudiencesApi($this->getClient(), $this->getDefaultConfiguration());
     }
 
     /**
